@@ -4,46 +4,53 @@ import BlogList from "../../components/blog/blog-list/BlogList";
 import "./styles.css";
 import MyCard from "../../components/myCard/MyCard";
 import Pagination from "../../components/pagination/Pagination";
+import Loader from "../../components/loader/Loader";
+import ErrorComponent from "../../components/errorComponent/ErrorComponent";
 
 const Home = props => {
   
+  const [showPosts, setShowPosts] = useState(false)
   const [loader, setLoader] = useState(true)
   const [error , setError] = useState(false)
-  const [seePosts, setSeePosts] = useState(true)
   const [posts, setPosts] = useState({})
-  /* console.log(posts.blogPosts); */
+  const [pageNumber, setPageNumber] = useState(1)
+
   const getAllPosts = async () =>{
     try {
-      const response = await fetch("http://localhost:3001/blogPosts");
+      const response = await fetch(`http://localhost:3001/blogPosts?page=${pageNumber}`);
       if (response.ok) {
         const data = await response.json();
         setPosts(data)
         setLoader(false)
-        setSeePosts(false)
+        setShowPosts(true)
       }else{
-        setLoader(true)
+        setLoader(false)
+        setShowPosts(false)
         setError(true)
       }
     } catch (error) {
-      console.error(error);
-      /* setError(true) */
+      setLoader(false)
+      setShowPosts(false)
+      setError(true)
     }
   }
 
   useEffect(()=>{
     getAllPosts()
-  },[])
+  },[pageNumber])
 
   return (
     <Container fluid="sm">
       <h1 className="blog-main-title mb-3">Benvenuto sullo Strive Blog!</h1>
       <Row>
-        <BlogList 
+        {/* <BlogList 
           loader={loader}
-          /* error={error} */
-        />
-        {!seePosts && (<MyCard posts={posts.blogPosts}/>)}
-        <Pagination/>
+          error={error}
+        /> */}
+        {loader && (<Loader/>)}
+        {showPosts && (<MyCard posts={posts.blogPosts}/>)}
+        {error && (<ErrorComponent/>)}
+        <Pagination setPageNumber={setPageNumber} pageNumber={pageNumber} totPages={posts.totPages}/>
       </Row>
     </Container>
   );

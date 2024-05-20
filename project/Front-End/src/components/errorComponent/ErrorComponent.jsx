@@ -4,7 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 
 export default function ErrorComponent() {
     return (
-        <div style={{height: 'calc(100vh - 360px)'}}>
+        <div style={{minHeight: 'calc(100vh - 140px)'}}>
             <Alert variant="danger">
                 <Alert.Heading>Element not found</Alert.Heading>
                 <p>

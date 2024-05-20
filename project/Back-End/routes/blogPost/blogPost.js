@@ -4,7 +4,7 @@ const BlogPostSchema = require('../../models/blogPostModel/blogPost')
 
 /* GET ALL POST */
 blogPost.get('/blogPosts', async (req, res) => {
-    const { page = 1, pageSize = 2, title = '*' } = req.query
+    const { page = 1, pageSize = 6, title = '*' } = req.query
     try {
         if (title === '*' || '') {
             const blogPosts = await BlogPostSchema.find().limit(pageSize).skip((page-1)*pageSize)
@@ -19,8 +19,8 @@ blogPost.get('/blogPosts', async (req, res) => {
                 blogPosts
                })
         } else {
-            const blogPosts = await BlogPostSchema.find()/* .limit(pageSize).skip((page - 1) * pageSize) */
-            console.log(blogPosts);
+            const blogPosts = await BlogPostSchema.find({title: {$regex: title, $options:'i'}}).limit(pageSize).skip((page - 1) * pageSize)
+            /* console.log(blogPosts); */
             const filterPost = blogPosts.filter(post => post.title.includes(title))
             const totPost = await BlogPostSchema.countDocuments()
             const totPages = Math.ceil(totPost / pageSize)

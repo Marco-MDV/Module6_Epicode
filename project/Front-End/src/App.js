@@ -6,6 +6,7 @@ import Blog from "./views/blog/Blog";
 import NewBlogPost from "./views/new/New";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SearchPosts from "./views/searchPosts/SearchPosts";
+import ErrorPage from "./views/errorPage/ErrorPage";
 
 function App() {
   const [posts, setPosts] = useState([])
@@ -44,6 +45,7 @@ function App() {
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/new" element={<NewBlogPost />} />
         <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error}/>} />
+        <Route path="*" element={<ErrorPage/>} />
       </Routes>
       <Footer />
     </Router>
