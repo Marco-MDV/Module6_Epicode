@@ -1,14 +1,22 @@
 const express = require('express')
 const authors = express.Router()
-const UserModel = require('../../models/model/users')
+const UserModel = require('../../models/userModel/users')
 
 /* tutti gli autori */
 authors.get('/authors', async (req, res) => {
+    const {page=1, pageSize=10} = req.query
     try {
-        const users = await UserModel.find()
+        const users = await UserModel.find().limit(pageSize).skip((page-1)*pageSize)
+        const totPost = await UserModel.countDocuments()
+        const totPages = Math.ceil(totPost / pageSize)
         res
             .status(200)
-            .send(users)
+            .send({
+                page:+page,
+                totPages:+totPages,
+                pageSize:+pageSize,
+                users
+            })
     } catch (e) {
         res
             .status(500)
