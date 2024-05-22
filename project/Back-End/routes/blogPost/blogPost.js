@@ -1,10 +1,14 @@
 const express = require('express')
 const blogPost = express.Router()
 const BlogPostSchema = require('../../models/blogPostModel/blogPost')
+const validateBody = require('../../middleware/checkPost/checkPost')
+const queryValidator = require('../../middleware/errorHeadler/errorHeadler')
+
+
 
 /* GET ALL POST */
-blogPost.get('/blogPosts', async (req, res) => {
-    const { page = 1, pageSize = 6, title = '*' } = req.query
+blogPost.get('/blogPosts', queryValidator,async (req, res) => {
+    const { page = 1, pageSize = 6, title='' } = req.query
     try {
         if (title === '*' || '') {
             const blogPosts = await BlogPostSchema.find().limit(pageSize).skip((page-1)*pageSize)
@@ -19,9 +23,9 @@ blogPost.get('/blogPosts', async (req, res) => {
                 blogPosts
                })
         } else {
+            /* $regex: title.replace(/[^\w\s]/i, '') */
             const blogPosts = await BlogPostSchema.find({title: {$regex: title, $options:'i'}}).limit(pageSize).skip((page - 1) * pageSize)
             /* console.log(blogPosts); */
-            const filterPost = blogPosts.filter(post => post.title.includes(title))
             const totPost = await BlogPostSchema.countDocuments()
             const totPages = Math.ceil(totPost / pageSize)
             res
@@ -30,7 +34,7 @@ blogPost.get('/blogPosts', async (req, res) => {
                     page: +page,
                     totPages: +totPages,
                     pageSize: +pageSize,
-                    filterPost,
+                    blogPosts,
                     title
                 })
         }
@@ -44,8 +48,9 @@ blogPost.get('/blogPosts', async (req, res) => {
     }
 })
 
+
 /* GET SINGLE POST */
-blogPost.get('/blogPosts/:postId', async (req, res) => {
+blogPost.get('/blogPosts/:postId', async (req, res, next) => {
     const { postId } = req.params
     try {
         const blogPost = await BlogPostSchema.findById(postId)
@@ -61,17 +66,12 @@ blogPost.get('/blogPosts/:postId', async (req, res) => {
             .status(200)
             .send(blogPost)
     } catch (e) {
-        res
-            .status(500)
-            .send({
-                statusCode: 500,
-                message: e.message
-            })
+        next(e)
     }
 })
 
 /* POST CREATE NEW POST */
-blogPost.post('/blogPosts', async (req, res) => {
+blogPost.post('/blogPosts',validateBody, async (req, res) => {
     const newPost = new BlogPostSchema({
         category: req.body.category,
         title: req.body.title,
@@ -193,29 +193,5 @@ blogPost.get('/authors/:authorId/blogPosts/', async (req, res) => {
     }
 })
 
-
-/* GET query */
-
-/* blogPost.get('/blogPostsx', async (req, res) => {
-    try {
-        const blogPosts = await BlogPostSchema.find({title:req.query.title})
-        res
-           .status(200)
-           .send({
-            blogPosts
-           })
-    } catch (e) {
-        res
-           .status(500)
-           .send({
-                statusCode: 500,
-                message: e.message
-            })
-    }
-})
-
-gli ho messo una x alla fine perché fa conflitto con quella iniziale 
-
-*/
 
 module.exports = blogPost 

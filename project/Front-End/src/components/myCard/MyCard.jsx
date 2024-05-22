@@ -7,7 +7,7 @@ export default function MyCard({ posts }) {
     return (
         <>
             {
-                posts.map((post, i) => {
+                posts && posts.map((post, i) => {
                     return (
                         <Col
                             key={`item-${i}`}

@@ -28,8 +28,3 @@ const BlogPostSchema = new mongoose.Schema({
 
 module.exports = mongoose.model('BlogPost',BlogPostSchema)
 
-/* 
-    indagare sull'unita di tempo
-    unit:"seconds",
-    precision:2 
-*/

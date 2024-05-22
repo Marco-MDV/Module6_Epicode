@@ -6,13 +6,14 @@ import MyCard from "../../components/myCard/MyCard";
 import Pagination from "../../components/pagination/Pagination";
 import Loader from "../../components/loader/Loader";
 import ErrorComponent from "../../components/errorComponent/ErrorComponent";
+import ElemtsNotFound from "../../components/elemtsNotFound/ElemtsNotFound";
 
 const Home = props => {
   
   const [showPosts, setShowPosts] = useState(false)
   const [loader, setLoader] = useState(true)
   const [error , setError] = useState(false)
-  const [posts, setPosts] = useState({})
+  const [posts, setPosts] = useState([])
   const [pageNumber, setPageNumber] = useState(1)
 
   const getAllPosts = async () =>{
@@ -21,8 +22,8 @@ const Home = props => {
       if (response.ok) {
         const data = await response.json();
         setPosts(data)
-        setLoader(false)
         setShowPosts(true)
+        setLoader(false)
       }else{
         setLoader(false)
         setShowPosts(false)
@@ -50,7 +51,7 @@ const Home = props => {
         {loader && (<Loader/>)}
         {showPosts && (<MyCard posts={posts.blogPosts}/>)}
         {error && (<ErrorComponent/>)}
-        <Pagination setPageNumber={setPageNumber} pageNumber={pageNumber} totPages={posts.totPages}/>
+        <Pagination setPageNumber={setPageNumber} pageNumber={pageNumber} totPages={posts?.totPages}/>
       </Row>
     </Container>
   );

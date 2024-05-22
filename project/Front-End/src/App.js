@@ -12,6 +12,8 @@ function App() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [showNotFound, setShowNotFound] = useState(false)
+
   const seach = async (input) =>{
     setLoading(true)
     setError(false)
@@ -23,8 +25,11 @@ function App() {
       });
       if (response.ok) {
         const posts = await response.json();
-        console.log(posts.filterPost);
-        setPosts(posts.filterPost)
+        if (posts.length > 0) {
+          setPosts(posts.blogPosts)
+        }else{
+          setShowNotFound(true)
+        }
         setLoading(false)
       } else {
         console.error(`HTTP error! status: ${response.status}`);
@@ -44,7 +49,7 @@ function App() {
         <Route path="/" exact element={<Home />} />
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/new" element={<NewBlogPost />} />
-        <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error}/>} />
+        <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error} showNotFound={showNotFound}/>} />
         <Route path="*" element={<ErrorPage/>} />
       </Routes>
       <Footer />
