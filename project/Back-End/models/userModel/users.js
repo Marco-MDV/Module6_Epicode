@@ -23,4 +23,3 @@ const UserSchema = new mongoose.Schema({
 },{timestamps: true, strict:true})
 
 module.exports = mongoose.model('UserModel', UserSchema, 'users');
-/* dataDiNascita */

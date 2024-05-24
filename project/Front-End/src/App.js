@@ -7,6 +7,7 @@ import NewBlogPost from "./views/new/New";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SearchPosts from "./views/searchPosts/SearchPosts";
 import ErrorPage from "./views/errorPage/ErrorPage";
+import Registration from "./views/registration/Registration"
 
 function App() {
   const [posts, setPosts] = useState([])
@@ -47,6 +48,7 @@ function App() {
       <NavBar seach={seach}/>
       <Routes>
         <Route path="/" exact element={<Home />} />
+        <Route path="/registration" element={<Registration/>} />
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/new" element={<NewBlogPost />} />
         <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error} showNotFound={showNotFound}/>} />

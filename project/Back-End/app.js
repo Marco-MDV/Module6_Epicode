@@ -3,13 +3,15 @@ const cors = require('cors');
 const { default: mongoose } = require('mongoose');
 const app = express();
 const PORT = 3001
-const errorHandler404 = require('./middleware/errorHeadler404/errorHeadler404')
+const errorHandler = require('./middleware/errorHeadler/errorHeadler')
+const errorHeadlerAstract = require('./middleware/errorHeadlerAstract/errorHeadlerAstract')
 require('dotenv').config()
 app.use(cors());
 
 const {authors} = require('./routes/authors/authors')
 const blogPost = require('./routes/blogPost/blogPost')
 const W2D1 = require('./routes/W2D1/W2D1Routes')
+const registration = require('./routes/registration/registration')
 mongoose.connect(process.env.DB_URL)
 const db = mongoose.connection
 db.on('error',console.error.bind(console,'DB connection error!'))
@@ -19,7 +21,9 @@ app.use(express.json())
 app.use('/', authors)
 app.use('/', blogPost)
 app.use('/', W2D1)
-app.use(errorHandler404)
+app.use('/', registration)
+app.use(errorHeadlerAstract)
+app.use(errorHandler)
 
 
 app.listen(PORT, () => {
