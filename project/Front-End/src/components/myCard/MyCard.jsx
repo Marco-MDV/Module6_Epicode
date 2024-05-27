@@ -18,14 +18,14 @@ export default function MyCard({ posts }) {
                         >
                             <Link className="blog-link">
                                 <Card className="blog-card">
-                                    <Card.Img variant="top" src={post.cover} className="blog-cover" />
+                                    <Card.Img variant="top" src={post.cover.imgPath} className="blog-cover" />
                                     <Card.Body>
                                         <Card.Title>{post.title}</Card.Title>
                                     </Card.Body>
                                     <Card.Footer>
                                         <Row>
                                             <Col>
-                                                <Image className="blog-author" src={post.cover} roundedCircle />
+                                                <Image className="blog-author" src='https://picsum.photos/200' roundedCircle />
                                             </Col>
                                             <Col>
                                                 <div>di</div>

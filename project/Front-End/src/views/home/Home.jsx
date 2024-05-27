@@ -7,12 +7,14 @@ import Pagination from "../../components/pagination/Pagination";
 import Loader from "../../components/loader/Loader";
 import ErrorComponent from "../../components/errorComponent/ErrorComponent";
 import ElemtsNotFound from "../../components/elemtsNotFound/ElemtsNotFound";
+import PostsNotFound from "../postsNotFound/PostsNotFound";
 
 const Home = props => {
   
   const [showPosts, setShowPosts] = useState(false)
   const [loader, setLoader] = useState(true)
   const [error , setError] = useState(false)
+  const [postsNotFound , setPostsNotFound] = useState(false)
   const [posts, setPosts] = useState([])
   const [pageNumber, setPageNumber] = useState(1)
 
@@ -22,6 +24,11 @@ const Home = props => {
       if (response.ok) {
         const data = await response.json();
         setPosts(data)
+        if (data.blogPosts.length === 0) {
+          setShowPosts(false)
+          setLoader(false)
+          setPostsNotFound(true)
+        }
         setShowPosts(true)
         setLoader(false)
       }else{
@@ -50,6 +57,7 @@ const Home = props => {
         /> */}
         {loader && (<Loader/>)}
         {showPosts && (<MyCard posts={posts.blogPosts}/>)}
+        {postsNotFound && (<PostsNotFound/>)}
         {error && (<ErrorComponent/>)}
         <Pagination setPageNumber={setPageNumber} pageNumber={pageNumber} totPages={posts?.totPages}/>
       </Row>

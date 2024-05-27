@@ -10,13 +10,12 @@ const NewBlogPost = props => {
   const [text, setText] = useState("");
   const handleChange = useCallback(value => {
     setText(draftToHtml(value));
-    //console.log(text)
-    // console.log(convertToRaw(value.getCurrentContent()))
   });
 
   const [author, setAuthor] = useState("")
+  const [email, setEmail] = useState("")
   const [title, setTitle] = useState("")
-  const [cover, setCover] = useState("")
+  const [cover, setCover] = useState(null)
   const [category, setCategory] = useState("Categoria 1")
   const [time, setTime] = useState(0)
   const [unit, setUnit] = useState("s")
@@ -27,34 +26,36 @@ const NewBlogPost = props => {
   const [themeBgTost, setThemeBgTost] = useState("")
 
 
+
+
   const creatNewPost = async (e) => {
     e.preventDefault();
+
+    const data = new FormData()
+    data.append('author', author)
+    data.append('title', title)
+    data.append('category', category)
+    data.append('time', time)
+    data.append('unit', unit)
+    data.append('content', content)
+    data.append('cover', cover)
+
+
+
     setAppruvedPost(false)
     try {
       const response = await fetch('http://localhost:3001/blogPosts', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          category,
-          title,
-          cover,
-          readTime:{
-            value: +time,
-            unit:unit
-          },
-          author,
-          content          
-        })
+        body: data
       });
-  
+      const dataJson = await response.json()
       if (response.status === 201) {
-        /* console.log('creato'); */
         setAppruvedPost(true)
         setTextPost('Post created')
         setThemeBgTost(' bg-success ')
         setThemeTextTost(' text-light-emphasis ')
+        sendMail()
+        console.log(dataJson);
       } else {
         setAppruvedPost(true)
         setTextPost('Not possible update your post!')
@@ -69,21 +70,48 @@ const NewBlogPost = props => {
   };
 
 
+  const sendMail = async ()=>{
+    try {
+        const mailData = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/email`,{
+          method: "POST",
+          body: JSON.stringify({
+            email: email,
+            subject: 'created post',
+            text: 'congratulation you have creat a new post'
+          })
+        })
+        const dataJson = await mailData.json()
+        /* console.log(dataJson); */
+        if (mailData.status === 200) {
+          console.log(dataJson);
+        } else {
+          console.log(dataJson);
+        }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Container className="new-blog-container">
       <Form className="mt-5" onSubmit={creatNewPost}>
         <Form.Group controlId="blog-form" className="mt-3">
           <Form.Label>Author</Form.Label>
-          <Form.Control size="lg" placeholder="Author" onChange={(e)=>setAuthor(e.target.value)}/>
+          <Form.Control size="lg" placeholder="Author"  onChange={(e)=>setAuthor(e.target.value)}/>
+        </Form.Group>
+
+        <Form.Group controlId="blog-form" className="mt-3">
+          <Form.Label>email</Form.Label>
+          <Form.Control size="lg" name="email" placeholder="email" onChange={(e)=>setEmail(e.target.value)}/>
         </Form.Group>
 
         <Form.Group controlId="blog-form" className="mt-3">
           <Form.Label>Cover</Form.Label>
-          <Form.Control size="lg" placeholder="Cover" onChange={(e)=>setCover(e.target.value)}/>
+          <Form.Control size="lg" type="file" name="cover" onChange={(e)=>setCover(e.target.files[0])}/>
         </Form.Group>
         
         <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Titolo</Form.Label>
+          <Form.Label>Title</Form.Label>
           <Form.Control size="lg" placeholder="Title" onChange={(e)=>{setTitle(e.target.value)}}/>
         </Form.Group>
 

@@ -8,6 +8,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SearchPosts from "./views/searchPosts/SearchPosts";
 import ErrorPage from "./views/errorPage/ErrorPage";
 import Registration from "./views/registration/Registration"
+import AreaUserForAvatar from "./views/areaUserForAvatar/AreaUserForAvatar";
+import ChangeCoverPosts from "./views/changeCoverPosts/ChangeCoverPosts";
 
 function App() {
   const [posts, setPosts] = useState([])
@@ -49,9 +51,11 @@ function App() {
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route path="/registration" element={<Registration/>} />
+        <Route path='/changeAvatarAuthor' element={<AreaUserForAvatar/>}/>
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/new" element={<NewBlogPost />} />
         <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error} showNotFound={showNotFound}/>} />
+        <Route path="/changeCoverPosts" element={<ChangeCoverPosts/>}/>
         <Route path="*" element={<ErrorPage/>} />
       </Routes>
       <Footer />
