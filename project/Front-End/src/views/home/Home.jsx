@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row } from "react-bootstrap";
-import BlogList from "../../components/blog/blog-list/BlogList";
 import "./styles.css";
 import MyCard from "../../components/myCard/MyCard";
 import Pagination from "../../components/pagination/Pagination";
 import Loader from "../../components/loader/Loader";
 import ErrorComponent from "../../components/errorComponent/ErrorComponent";
-import ElemtsNotFound from "../../components/elemtsNotFound/ElemtsNotFound";
 import PostsNotFound from "../postsNotFound/PostsNotFound";
 
 const Home = props => {
@@ -56,7 +54,13 @@ const Home = props => {
           error={error}
         /> */}
         {loader && (<Loader/>)}
-        {showPosts && (<MyCard posts={posts.blogPosts}/>)}
+        {showPosts && (
+          posts.blogPosts.map(post=>{
+            return(
+              <MyCard key={post._id} post={post}/>
+            )
+          })
+        )}
         {postsNotFound && (<PostsNotFound/>)}
         {error && (<ErrorComponent/>)}
         <Pagination setPageNumber={setPageNumber} pageNumber={pageNumber} totPages={posts?.totPages}/>
