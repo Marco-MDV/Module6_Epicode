@@ -10,6 +10,7 @@ import ErrorPage from "./views/errorPage/ErrorPage";
 import Registration from "./views/registration/Registration"
 import AreaUserForAvatar from "./views/areaUserForAvatar/AreaUserForAvatar";
 import ChangeCoverPosts from "./views/changeCoverPosts/ChangeCoverPosts";
+import Login from "./views/login/Login";
 
 function App() {
   const [posts, setPosts] = useState([])
@@ -56,6 +57,7 @@ function App() {
         <Route path="/new" element={<NewBlogPost />} />
         <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error} showNotFound={showNotFound}/>} />
         <Route path="/changeCoverPosts" element={<ChangeCoverPosts/>}/>
+        <Route path="/login" element={<Login/>}/>
         <Route path="*" element={<ErrorPage/>} />
       </Routes>
       <Footer />

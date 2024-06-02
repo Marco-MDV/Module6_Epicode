@@ -80,7 +80,7 @@ export default function Registration() {
             <Form.Control type="password" placeholder="Password" name='password' onChange={conHostChangeInput}/>
           </Form.Group>
           <div className='w-100 d-flex justify-content-center '>
-            <Button type='submit' variant='primary'>
+            <Button type='submit' variant='primary' className='btn btn-dark'>
               Submit
             </Button>
           </div>

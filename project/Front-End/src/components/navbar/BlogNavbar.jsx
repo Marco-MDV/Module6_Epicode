@@ -17,7 +17,7 @@ const NavBar = props => {
             <input type="search" name="" id="" className="border rounded-2 rounded-end-0" onChange={(e) => setInput(e.target.value)} />
             <Link to="/search"><button className="btn btn-dark rounded-start-0 " type='button' onClick={() => props.seach(input)}>Search</button></Link>
           </div>
-          <div className="d-flex justify-content-center align-items-center gap-2 flex-column flex-md-row">
+          <div className="d-flex justify-content-center align-items-center gap-2 flex-column flex-md-row flex-wrap">
             <Button as={Link} to="/new" className="blog-navbar-add-button bg-dark" size="small">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -46,6 +46,7 @@ const NavBar = props => {
             </Button>
             <Button as={Link} to="/changeAvatarAuthor" className="blog-navbar-add-button bg-dark" size="small ">Mod Avatar</Button>
             <Button as={Link} to="/changeCoverPosts" className="blog-navbar-add-button bg-dark" size="small ">Mod Cover</Button>
+            <Button as={Link} to='/login' className="blog-navbar-add-button bg-dark" size="small ">Login</Button>
           </div>
         </div>
       </Container>

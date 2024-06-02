@@ -5,6 +5,7 @@ const registrationSchema = require('../../models/registration/registration')
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const validateBodyRegistrationAuthor = require('../../middleware/checkAuthorRegistration/checkAuthorRegistration')
+const bcrypt = require('bcrypt')
 
 /* GET request */
 registration.get('/avatars', async (req, res, next) =>{
@@ -55,7 +56,7 @@ registration.post('/registration', [uploadCloud.single('avatar')], async (req, r
                 public_id: req.file.filename
             },
             email: req.body.email,
-            password: req.body.password
+            password: await bcrypt.hash(req.body.password, 10)
         })
         const emailExistent = await registrationSchema.findOne({ email: req.body.email })
         if (emailExistent) {

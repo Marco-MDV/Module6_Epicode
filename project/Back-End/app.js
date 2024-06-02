@@ -12,7 +12,8 @@ const {authors} = require('./routes/authors/authors')
 const blogPost = require('./routes/blogPost/blogPost')
 const W2D1 = require('./routes/W2D1/W2D1Routes')
 const registration = require('./routes/registration/registration');
-const email = require('./routes/email/email')
+const email = require('./routes/email/email');
+const login = require('./routes/login/login');
 mongoose.connect(process.env.DB_URL)
 const db = mongoose.connection
 db.on('error',console.error.bind(console,'DB connection error!'))
@@ -24,6 +25,7 @@ app.use('/', blogPost)
 app.use('/', W2D1)
 app.use('/', registration)
 app.use('/', email)
+app.use('/', login)
 app.use(errorHeadlerAstract)
 app.use(errorHandler)
 
