@@ -49,10 +49,6 @@ const Home = props => {
     <Container fluid="sm">
       <h1 className="blog-main-title mb-3">Benvenuto sullo Strive Blog!</h1>
       <Row>
-        {/* <BlogList 
-          loader={loader}
-          error={error}
-        /> */}
         {loader && (<Loader/>)}
         {showPosts && (
           posts.blogPosts.map(post=>{

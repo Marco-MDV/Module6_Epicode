@@ -323,6 +323,7 @@ blogPost.patch(`/blogPosts/:id/comments/:commentId`, async (req, res, next) => {
     const { id, commentId } = req.params
     const { newComment } = req.body
 
+    console.log(commentId);
     try {
         const post = await BlogPostSchema.findById(id);
         post.comments.map(comment => {
@@ -334,10 +335,8 @@ blogPost.patch(`/blogPosts/:id/comments/:commentId`, async (req, res, next) => {
                     .json({
                         statusCode: 200,
                         message: 'Comment updated successfully',
-                        newCommentIs: newComment
+                        newCommentIs: comment
             })
-            }else{
-                next({message : 'Comment not found', status: 404})
             }
         });
     } catch (e) {
@@ -363,7 +362,7 @@ blogPost.delete(`/blogPosts/:id/comments/:commentId`, async (req, res, next) => 
             .status(200)
             .send({
                 statusCode: 200,
-                message: 'comment deleted'
+                message: 'comment deleted',
             })
     } catch (error) {
         next(error)
