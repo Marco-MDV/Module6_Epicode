@@ -1,12 +1,12 @@
 const express = require('express')
 const blogPost = express.Router()
-const { BlogPostSchema, commentsSchema } = require('../../models/blogPostModel/blogPost')
-const validateBody = require('../../middleware/checkPost/checkPost')
+const { BlogPostSchema } = require('../../models/blogPostModel/blogPost')
 const queryValidator = require('../../middleware/errorHeadler/errorHeadler')
 const cloudinary = require('cloudinary').v2
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
+const registrationSchema = require('../../models/registration/registration')
+const jwt = require('jsonwebtoken')
 const multer = require('multer')
-const { default: mongoose } = require('mongoose')
 
 /* GET ALL POST */
 blogPost.get('/blogPosts', queryValidator, async (req, res) => {
@@ -94,22 +94,9 @@ const storage = new CloudinaryStorage({
 const uploadCloud = multer({ storage: storage })
 /* [validateBody] */
 blogPost.post('/blogPosts', uploadCloud.single('cover'), async (req, res) => {
-    const newPost = new BlogPostSchema({
-        category: req.body.category,
-        title: req.body.title,
-        cover: {
-            imgPath: req.file.path,
-            public_id: req.file.filename
-        },
-        readTime: {
-            value: req.body.time,
-            unit: req.body.unit
-        },
-        author: req.body.author,
-        content: req.body.content
-    })
+    const {category , time , unit , title, author } = JSON.parse(req.body.formData)
     try {
-        const titleExistent = await BlogPostSchema.findOne({ title: req.body.content })
+        const titleExistent = await BlogPostSchema.findOne({ title: title })
         if (titleExistent) {
             return res
                 .status(409)
@@ -118,6 +105,25 @@ blogPost.post('/blogPosts', uploadCloud.single('cover'), async (req, res) => {
                     message: 'post already exist'
                 })
         }
+        const token = req.body.token
+        const userData = jwt.decode(token)
+        const user = await registrationSchema.findOne({email: userData.email})
+
+        const newPost = new BlogPostSchema({
+            category: category,
+            title: title,
+            cover: {
+                imgPath: req.file.path,
+                public_id: req.file.filename
+            },
+            readTime: {
+                value: time,
+                unit: unit
+            },
+            author: user.username,
+            content: req.body.content,
+            avatar: user.img.avatar
+        })
         const blogPost = await newPost.save()
         res
             .status(201)

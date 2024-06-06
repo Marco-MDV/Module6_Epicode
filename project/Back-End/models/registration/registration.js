@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const registrationSchema = new mongoose.Schema({
     username:{
         type:String,
@@ -10,8 +11,7 @@ const registrationSchema = new mongoose.Schema({
             required:true
         },
         public_id:{
-            type:String,
-            required:true
+            type:String
         }
     },
     email:{

@@ -5,8 +5,11 @@ const app = express();
 const PORT = 3001
 const errorHandler = require('./middleware/errorHeadler/errorHeadler')
 const errorHeadlerAstract = require('./middleware/errorHeadlerAstract/errorHeadlerAstract')
+const passport = require('passport');
+const googleStrategy = require('./middleware/OAuthMiddleware/OAuthMiddleware')
 require('dotenv').config()
 app.use(cors());
+passport.use('google',googleStrategy)
 
 const {authors} = require('./routes/authors/authors')
 const blogPost = require('./routes/blogPost/blogPost')

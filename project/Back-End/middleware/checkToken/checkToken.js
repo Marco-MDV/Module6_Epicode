@@ -8,7 +8,7 @@ const checkToken = (req, res, next)=>{
     try {
         jwt.verify(token.split(' ')[1], process.env.SECRET_KEY , (err, data)=>{
             if (err) {
-                next({message: 'inavlid Token', status:401})
+                res.status(401).json({message: 'inavlid Token'})
             }else{
                 req.body = data
                 next()

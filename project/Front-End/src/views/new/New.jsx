@@ -11,33 +11,34 @@ const NewBlogPost = props => {
     setText(draftToHtml(value));
   });
 
-  const [author, setAuthor] = useState("")
-  const [email, setEmail] = useState("")
-  const [title, setTitle] = useState("")
   const [cover, setCover] = useState(null)
-  const [category, setCategory] = useState("Categoria 1")
-  const [time, setTime] = useState(0)
-  const [unit, setUnit] = useState("s")
   const [content, setContent] = useState("")
   const [appruvedPost, setAppruvedPost] = useState(false)
   const [textPost, setTextPost] = useState("")
   const [themeTextTost, setThemeTextTost] = useState("")
   const [themeBgTost, setThemeBgTost] = useState("")
+  const [formData, setFormData] = useState({
+    category:"Categoria 1",
+    time:0,
+    unit:"s",
+  })
 
-
-
+  const headlerFormData =(e)=>{
+    const { name, value } = e.target
+    setFormData({
+     ...formData,
+      [name]: value
+    })
+  }
 
   const creatNewPost = async (e) => {
     e.preventDefault();
-
+    const token = localStorage.getItem('toke')
     const data = new FormData()
-    data.append('author', author)
-    data.append('title', title)
-    data.append('category', category)
-    data.append('time', time)
-    data.append('unit', unit)
+    data.append('formData', JSON.stringify(formData))
     data.append('content', content)
     data.append('cover', cover)
+    data.append('token',token)
 
 
 
@@ -74,7 +75,7 @@ const NewBlogPost = props => {
         const mailData = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/email`,{
           method: "POST",
           body: JSON.stringify({
-            email: email,
+            email: formData.email,
             subject: 'created post',
             text: 'congratulation you have creat a new post'
           })
@@ -95,28 +96,18 @@ const NewBlogPost = props => {
     <Container className="new-blog-container">
       <Form className="mt-5" onSubmit={creatNewPost}>
         <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>Author</Form.Label>
-          <Form.Control size="lg" placeholder="Author"  onChange={(e)=>setAuthor(e.target.value)}/>
-        </Form.Group>
-
-        <Form.Group controlId="blog-form" className="mt-3">
-          <Form.Label>email</Form.Label>
-          <Form.Control size="lg" name="email" placeholder="email" onChange={(e)=>setEmail(e.target.value)}/>
-        </Form.Group>
-
-        <Form.Group controlId="blog-form" className="mt-3">
           <Form.Label>Cover</Form.Label>
           <Form.Control size="lg" type="file" name="cover" onChange={(e)=>setCover(e.target.files[0])}/>
         </Form.Group>
         
         <Form.Group controlId="blog-form" className="mt-3">
           <Form.Label>Title</Form.Label>
-          <Form.Control size="lg" placeholder="Title" onChange={(e)=>{setTitle(e.target.value)}}/>
+          <Form.Control size="lg" placeholder="Title" name="title" onChange={headlerFormData}/>{/* (e)=>{setTitle(e.target.value)} */}
         </Form.Group>
 
         <Form.Group controlId="blog-category" className="mt-3">
           <Form.Label>Categoria</Form.Label>
-          <Form.Control size="lg" as="select" onChange={(e)=>setCategory(e.target.value)}>
+          <Form.Control size="lg" as="select" name="category" onChange={headlerFormData}>{/* (e)=>setCategory(e.target.value) */}
             <option>Categoria 1</option>
             <option>Categoria 2</option>
             <option>Categoria 3</option>
@@ -129,11 +120,11 @@ const NewBlogPost = props => {
           <div className="d-flex w-100 gap-1">
             <div className="w-50">
               <Form.Label>Read time</Form.Label>
-              <Form.Control size="lg" placeholder="readTime" type="number" onChange={(e)=>{setTime(e.target.value)}}/>
+              <Form.Control size="lg" placeholder="readTime" type="number" name="time" onChange={headlerFormData}/>{/* (e)=>{setTime(e.target.value)} */}
             </div>
             <div className="w-50">
               <Form.Label>Unit of measure</Form.Label>
-              <Form.Control size="lg" as="select" onChange={(e)=>setUnit(e.target.value)}>
+              <Form.Control size="lg" as="select" name="unit" onChange={headlerFormData}>{/* (e)=>setUnit(e.target.value) */}
                 <option>s</option>
                 <option>m</option>
                 <option>h</option>
@@ -144,7 +135,7 @@ const NewBlogPost = props => {
 
         <Form.Group controlId="blog-content" className="mt-3" >
           <Form.Label>Contenuto Blog</Form.Label>
-          <Editor value={text} onChange={(e)=>(handleChange(e.blocks[0].text), setContent(e.blocks[0].text))}  className="new-blog-content"/>
+          <Editor value={text} onChange={(e)=>(handleChange(e.blocks[0].text), setContent(e.blocks[0].text))} name='textPost' className="new-blog-content"/>
         </Form.Group>
 
         <Form.Group className="d-flex mt-3 justify-content-end">

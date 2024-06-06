@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "./components/navbar/BlogNavbar";
 import Footer from "./components/footer/Footer";
 import Home from "./views/home/Home";
@@ -12,14 +12,24 @@ import AreaUserForAvatar from "./views/areaUserForAvatar/AreaUserForAvatar";
 import ChangeCoverPosts from "./views/changeCoverPosts/ChangeCoverPosts";
 import Login from "./views/login/Login";
 import User from './views/userArea/User'
+import CheckToken from "./use/checkToken/CheckToken";
 
 function App() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [showNotFound, setShowNotFound] = useState(false)
-
-  const seach = async (input) =>{
+  const [showList, setShowList] = useState(false)
+  console.log(showList);
+  const presenceToken = (token)=>{
+    if (token) {
+      setShowList(true)
+    }else{
+      setShowList(false)
+    }
+  }
+  
+  const seach = async (input) => {
     setLoading(true)
     setError(false)
     try {
@@ -32,7 +42,7 @@ function App() {
         const posts = await response.json();
         if (posts.length > 0) {
           setPosts(posts.blogPosts)
-        }else{
+        } else {
           setShowNotFound(true)
         }
         setLoading(false)
@@ -47,20 +57,25 @@ function App() {
       setError(true)
     }
   }
+
+
+
   return (
     <Router>
-      <NavBar seach={seach}/>
+      <NavBar seach={seach} showList={showList}/>
       <Routes>
-        <Route path="/" exact element={<Home />} />
-        <Route path="/registration" element={<Registration/>} />
-        <Route path='/changeAvatarAuthor' element={<AreaUserForAvatar/>}/>
-        <Route path="/blog/:id" element={<Blog />} />
-        <Route path="/new" element={<NewBlogPost />} />
-        <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error} showNotFound={showNotFound}/>} />
-        <Route path="/changeCoverPosts" element={<ChangeCoverPosts/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path='/UserAsrea' element={<User/>}/>
-        <Route path="*" element={<ErrorPage/>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/registration" element={<Registration />} />
+        <Route path="/search" element={<SearchPosts posts={posts} loading={loading} error={error} showNotFound={showNotFound} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path='/UserAsrea/:toke' element={<User presenceToken={presenceToken} />} />
+        <Route element={<CheckToken />}>
+          <Route path="/blog/:id" element={<Blog />} />
+          <Route path="/new" element={<NewBlogPost />} />
+          <Route path='/changeAvatarAuthor' element={<AreaUserForAvatar />} />
+          <Route path="/changeCoverPosts" element={<ChangeCoverPosts />} />
+        </Route>
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
       <Footer />
     </Router>

@@ -88,7 +88,7 @@ export default function MyCard({ post }) {
                     <Card.Footer>
                         <Row>
                             <Col>
-                                <Image className="blog-author" src='https://picsum.photos/200' roundedCircle />
+                                <Image className="blog-author" src={post.avatar} roundedCircle />
                             </Col>
                             <Col>
                                 <div>di</div>
