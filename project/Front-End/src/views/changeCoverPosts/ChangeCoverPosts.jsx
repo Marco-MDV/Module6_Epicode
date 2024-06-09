@@ -20,8 +20,6 @@ export default function ChangeCoverPosts() {
             const response = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/blogPosts?author=${formData.author}&&title=${formData.title}`)
             const dataJson = await response.json()
             if (response.ok) {
-                console.log(dataJson);
-                /* await requestChangeCoverPicture(dataJson, data) */
                 modPost(dataJson)
             }
         } catch (error) {
@@ -40,9 +38,7 @@ export default function ChangeCoverPosts() {
                 method: "PATCH",
                 body: data
             })
-            const responseData = await response.json()
-            console.log(responseData);
-            if (response.status === 201) {
+            if (response.ok) {
                 console.log('modificato');
             }
         } catch (error) {

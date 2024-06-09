@@ -7,6 +7,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary')
 const registrationSchema = require('../../models/registration/registration')
 const jwt = require('jsonwebtoken')
 const multer = require('multer')
+const approvedToken = require('../../middleware/approvedToken/approvedToken')
 
 /* GET ALL POST */
 blogPost.get('/blogPosts', queryValidator, async (req, res) => {
@@ -48,6 +49,31 @@ blogPost.get('/blogPosts', queryValidator, async (req, res) => {
             })
     }
 })
+
+
+/* search */
+
+blogPost.post('/blogPosts/search', queryValidator, async (req, res, next) => {
+    const { page = 1, pageSize = 6, title = '' } = req.query
+    const {input} = req.body
+    try {
+        const blogPosts = await BlogPostSchema.find({ title: { $regex: input, $options: 'i' } }).limit(pageSize).skip((page - 1) * pageSize)
+        const totPost = await BlogPostSchema.countDocuments()
+        const totPages = Math.ceil(totPost / pageSize)
+        res
+           .status(200)
+           .send({
+                page: +page,
+                totPages: +totPages,
+                pageSize: +pageSize,
+                blogPosts,
+                title
+            })
+    } catch (error) {
+        next(error)
+    }
+})
+
 
 
 /* GET SINGLE POST */
@@ -93,8 +119,8 @@ const storage = new CloudinaryStorage({
 
 const uploadCloud = multer({ storage: storage })
 /* [validateBody] */
-blogPost.post('/blogPosts', uploadCloud.single('cover'), async (req, res) => {
-    const {category , time , unit , title, author } = JSON.parse(req.body.formData)
+blogPost.post('/blogPosts', [uploadCloud.single('cover'), approvedToken], async (req, res) => {
+    const {category , time , unit , title } = JSON.parse(req.body.formData)
     try {
         const titleExistent = await BlogPostSchema.findOne({ title: title })
         if (titleExistent) {
@@ -105,10 +131,9 @@ blogPost.post('/blogPosts', uploadCloud.single('cover'), async (req, res) => {
                     message: 'post already exist'
                 })
         }
-        const token = req.body.token
+        const token = req.headers.authorization.split(' ')[1]
         const userData = jwt.decode(token)
         const user = await registrationSchema.findOne({email: userData.email})
-
         const newPost = new BlogPostSchema({
             category: category,
             title: title,

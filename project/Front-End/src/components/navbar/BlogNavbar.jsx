@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Navbar, Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import "./styles.css";
 const NavBar = props => {
   const [input, setInput] = useState('')
+  const token = localStorage.getItem('toke')
+
+  useEffect(() => {props.presenceToken(token)},[])
 
   return (
     <Navbar expand="lg" className="blog-navbar" fixed="top">
@@ -51,7 +54,6 @@ const NavBar = props => {
                 </svg>
                 registration
               </Button>
-              <Button as={Link} to="/changeAvatarAuthor" className="blog-navbar-add-button bg-transparent text-dark border-0" size="small ">Mod Avatar</Button>
               <Button as={Link} to="/changeCoverPosts" className="blog-navbar-add-button bg-transparent text-dark border-0" size="small ">Mod Cover</Button>
               <Button as={Link} to='/login' className="blog-navbar-add-button bg-transparent text-dark border-0" size="small ">Login</Button>
             </Dropdown.Menu>
@@ -95,8 +97,6 @@ const NavBar = props => {
                   </svg>
                   Nuovo Articolo
                 </Button>
-                <Button as={Link} to="/changeAvatarAuthor" className="blog-navbar-add-button bg-dark" size="small ">Mod Avatar</Button>
-                <Button as={Link} to="/changeCoverPosts" className="blog-navbar-add-button bg-dark" size="small ">Mod Cover</Button>
               </>
             )}
           </div>

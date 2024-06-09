@@ -23,7 +23,6 @@ const BlogPostSchema = new mongoose.Schema({
         },
         public_id:{
             type:String,
-            required:true
         }
     },
     readTime:{
@@ -33,7 +32,6 @@ const BlogPostSchema = new mongoose.Schema({
     author:{
         type:String,
         required:true,
-        unique:true
     },
     content:{
         type:String,

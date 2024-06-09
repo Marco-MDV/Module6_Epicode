@@ -12,7 +12,6 @@ const googleStrategy = new GoogleStrategy({
   async function (accessToken, refreshToken, profile, cb) {
     try {
       const { name, picture, email } = profile._json
-      console.log(name, picture, email)
       const user = await registrationSchema.findOne({ email })
       if (user) {
         const token = jwt.sign({ username: user.name, email: user.email, avatar: user.img.avatar }, `${process.env.SECRET_KEY}`, { expiresIn: '1h' })

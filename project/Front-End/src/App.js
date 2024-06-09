@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NavBar from "./components/navbar/BlogNavbar";
 import Footer from "./components/footer/Footer";
 import Home from "./views/home/Home";
@@ -8,7 +8,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SearchPosts from "./views/searchPosts/SearchPosts";
 import ErrorPage from "./views/errorPage/ErrorPage";
 import Registration from "./views/registration/Registration"
-import AreaUserForAvatar from "./views/areaUserForAvatar/AreaUserForAvatar";
 import ChangeCoverPosts from "./views/changeCoverPosts/ChangeCoverPosts";
 import Login from "./views/login/Login";
 import User from './views/userArea/User'
@@ -20,7 +19,7 @@ function App() {
   const [error, setError] = useState(false)
   const [showNotFound, setShowNotFound] = useState(false)
   const [showList, setShowList] = useState(false)
-  console.log(showList);
+  
   const presenceToken = (token)=>{
     if (token) {
       setShowList(true)
@@ -28,28 +27,27 @@ function App() {
       setShowList(false)
     }
   }
-  
+
+
   const seach = async (input) => {
     setLoading(true)
     setError(false)
     try {
-      const response = await fetch(`http://localhost:3001/blogPosts?title=${input}`, {
+      const response = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/blogPosts/search`, {
+        method: "POST",
+        body: JSON.stringify({ input: input }),
         headers: {
           "Content-Type": "application/json"
         }
-      });
+      })
       if (response.ok) {
-        const posts = await response.json();
-        if (posts.length > 0) {
-          setPosts(posts.blogPosts)
+        const responsePosts = await response.json();
+        if (responsePosts.blogPosts.length > 0) {
+          setPosts(responsePosts.blogPosts)
         } else {
           setShowNotFound(true)
         }
         setLoading(false)
-      } else {
-        console.error(`HTTP error! status: ${response.status}`);
-        setLoading(false)
-        setError(true)
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -62,7 +60,7 @@ function App() {
 
   return (
     <Router>
-      <NavBar seach={seach} showList={showList}/>
+      <NavBar seach={seach} showList={showList} presenceToken={presenceToken}/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/registration" element={<Registration />} />
@@ -72,7 +70,6 @@ function App() {
         <Route element={<CheckToken />}>
           <Route path="/blog/:id" element={<Blog />} />
           <Route path="/new" element={<NewBlogPost />} />
-          <Route path='/changeAvatarAuthor' element={<AreaUserForAvatar />} />
           <Route path="/changeCoverPosts" element={<ChangeCoverPosts />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />

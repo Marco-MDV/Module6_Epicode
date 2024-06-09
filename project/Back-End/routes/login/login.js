@@ -42,7 +42,6 @@ login.post('/login', async (req, res,next) => {
 
 login.get('/me', checkToken , async(req, res, next)=>{
     const {email}=req.body
-    console.log(req.body);
     try {
         const user = await registrationSchema.findOne({email})
         res.status(200).send({email: user.email, img: user.img.avatar, username: user.username})

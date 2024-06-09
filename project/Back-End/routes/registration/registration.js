@@ -4,19 +4,20 @@ const registration = express.Router()
 const registrationSchema = require('../../models/registration/registration')
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const validateBodyRegistrationAuthor = require('../../middleware/checkAuthorRegistration/checkAuthorRegistration')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 
 /* GET request */
-registration.get('/avatars', async (req, res, next) =>{
+registration.get('/avatars', async (req, res, next) => {
     /* console.log(req.query); */
-    const { email , password } = req.query
+    const { email, password } = req.query
     try {
-        const avatars = await registrationSchema.find({email: email, password: password})
+        const avatars = await registrationSchema.find({ email: email, password: password })
         if (!avatars) {
             return res
-               .status(404)
-               .send({
+                .status(404)
+                .send({
                     status: 404,
                     message: 'user not found'
                 })
@@ -35,12 +36,13 @@ cloudinary.config({
     api_secret: process.env.API_SECRET
 })
 
-const storage = new CloudinaryStorage({
+const storage = new CloudinaryStorage(
+    {
     cloudinary: cloudinary,
     params: {
         folder: 'epicode',
         format: async (req, file) => 'png',
-        public_id: (req, file) => {file.originalname}
+        public_id: (req, file) => { file.originalname }
     }
 })
 
@@ -49,15 +51,6 @@ const uploadCloud = multer({ storage: storage })
 
 registration.post('/registration', [uploadCloud.single('avatar')], async (req, res, next) => {
     try {
-        const newRegistration = new registrationSchema({
-            username: req.body.username,
-            img: {
-                avatar: req.file.path,
-                public_id: req.file.filename
-            },
-            email: req.body.email,
-            password: await bcrypt.hash(req.body.password, 10)
-        })
         const emailExistent = await registrationSchema.findOne({ email: req.body.email })
         if (emailExistent) {
             return res
@@ -67,6 +60,7 @@ registration.post('/registration', [uploadCloud.single('avatar')], async (req, r
                     message: 'email already exist'
                 })
         }
+
         const author = await newRegistration.save()
         res.status(201).send({ status: 201, message: 'Registration', author })
     } catch (e) {
@@ -75,28 +69,27 @@ registration.post('/registration', [uploadCloud.single('avatar')], async (req, r
 })
 
 
-registration.patch('/authors/:authorId/avatar', uploadCloud.single('avatar'), async(req,res,next)=>{
+registration.patch('/me/avatar', [uploadCloud.single('avatar')], async (req, res, next) => {
     try {
-    const authorId = req.params.authorId;
-    const author = await registrationSchema.findById({ _id: authorId });
-    if (!author) {
-      return res.status(404).send({ message: 'Author not found' });
-    }
-    if (author.img && author.img.public_id) {
-      await cloudinary.api.delete_resources(author.img.public_id);
-    }
-    const filter = {_id: author}
-    const avatarNew = {
-        $set:{
-            img:{
-                avatar: req.file.path,
-                public_id: req.file.filename
+        console.log(req.file);
+        const token = req.headers.authorization.split(' ')[1]
+        const dataUser = jwt.decode(token)
+        const author = await registrationSchema.findOne({ email: dataUser.email });
+        if (!author) {
+            return res.status(404).send({ message: 'Author not found' });
+        }
+        const filter = { _id: author }
+        
+        const avatarNew = {
+            $set: {
+                img: {
+                    avatar: req.file.path,
+                }
             }
         }
-    }
 
-    await registrationSchema.updateMany(filter, avatarNew)
-    res.json({ img: { avatar, public_id } });
+        await registrationSchema.updateMany(filter, avatarNew)
+        res.json({ img: req.file.path });
     } catch (error) {
         next(error.message)
     }

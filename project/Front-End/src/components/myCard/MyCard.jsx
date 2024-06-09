@@ -5,7 +5,6 @@ import "../blog/blog-item/BlogItem"
 import SingleComment from './singleComment/SingleComment'
 
 export default function MyCard({ post }) {
-
     const [showComments, setShowComments] = useState(false)
     const changeStausComment = () => {
         setShowComments(!showComments)

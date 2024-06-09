@@ -1,0 +1,39 @@
+.containerAvatar{
+    width: 150px;
+    height: 150px;
+}
+
+.custom-file-input-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.custom-file-input-icon {
+    width: 30px;
+    height: 30px;
+    color: transparent;
+}
+
+.custom-file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.containerAvatar:hover{
+    && figure{
+        filter: blur(4px);
+    }
+    && .custom-file-input-button{
+        background-color: white;
+    }
+    && .custom-file-input-icon{
+        color: black;
+    }
+}

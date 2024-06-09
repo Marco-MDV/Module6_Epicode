@@ -38,15 +38,15 @@ const NewBlogPost = props => {
     data.append('formData', JSON.stringify(formData))
     data.append('content', content)
     data.append('cover', cover)
-    data.append('token',token)
-
-
 
     setAppruvedPost(false)
     try {
-      const response = await fetch('http://localhost:3001/blogPosts', {
+      const response = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/blogPosts`, {
         method: "POST",
-        body: data
+        body: data,
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
       const dataJson = await response.json()
       if (response.status === 201) {
@@ -81,7 +81,6 @@ const NewBlogPost = props => {
           })
         })
         const dataJson = await mailData.json()
-        /* console.log(dataJson); */
         if (mailData.status === 200) {
           console.log(dataJson);
         } else {
@@ -102,12 +101,12 @@ const NewBlogPost = props => {
         
         <Form.Group controlId="blog-form" className="mt-3">
           <Form.Label>Title</Form.Label>
-          <Form.Control size="lg" placeholder="Title" name="title" onChange={headlerFormData}/>{/* (e)=>{setTitle(e.target.value)} */}
+          <Form.Control size="lg" placeholder="Title" name="title" onChange={headlerFormData}/>
         </Form.Group>
 
         <Form.Group controlId="blog-category" className="mt-3">
           <Form.Label>Categoria</Form.Label>
-          <Form.Control size="lg" as="select" name="category" onChange={headlerFormData}>{/* (e)=>setCategory(e.target.value) */}
+          <Form.Control size="lg" as="select" name="category" onChange={headlerFormData}>
             <option>Categoria 1</option>
             <option>Categoria 2</option>
             <option>Categoria 3</option>
@@ -120,11 +119,11 @@ const NewBlogPost = props => {
           <div className="d-flex w-100 gap-1">
             <div className="w-50">
               <Form.Label>Read time</Form.Label>
-              <Form.Control size="lg" placeholder="readTime" type="number" name="time" onChange={headlerFormData}/>{/* (e)=>{setTime(e.target.value)} */}
+              <Form.Control size="lg" placeholder="readTime" type="number" name="time" onChange={headlerFormData}/>
             </div>
             <div className="w-50">
               <Form.Label>Unit of measure</Form.Label>
-              <Form.Control size="lg" as="select" name="unit" onChange={headlerFormData}>{/* (e)=>setUnit(e.target.value) */}
+              <Form.Control size="lg" as="select" name="unit" onChange={headlerFormData}>
                 <option>s</option>
                 <option>m</option>
                 <option>h</option>
