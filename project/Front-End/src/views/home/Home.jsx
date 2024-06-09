@@ -18,7 +18,7 @@ const Home = props => {
 
   const getAllPosts = async () =>{
     try {
-      const response = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/blogPosts?page=${pageNumber}`);
+      const response = await fetch(`${process.env.BACK_HOST}/blogPosts?page=${pageNumber}`);
       if (response.ok) {
         const data = await response.json();
         setPosts(data)

@@ -56,21 +56,23 @@ blogPost.get('/blogPosts', queryValidator, async (req, res) => {
 blogPost.post('/blogPosts/search', queryValidator, async (req, res, next) => {
     const { page = 1, pageSize = 6, title = '' } = req.query
     const {input} = req.body
-    try {
-        const blogPosts = await BlogPostSchema.find({ title: { $regex: input, $options: 'i' } }).limit(pageSize).skip((page - 1) * pageSize)
-        const totPost = await BlogPostSchema.countDocuments()
-        const totPages = Math.ceil(totPost / pageSize)
-        res
-           .status(200)
-           .send({
-                page: +page,
-                totPages: +totPages,
-                pageSize: +pageSize,
-                blogPosts,
-                title
-            })
-    } catch (error) {
-        next(error)
+    if (input !== ' ') {
+        try {
+            const blogPosts = await BlogPostSchema.find({ title: { $regex: input, $options: 'i' } }).limit(pageSize).skip((page - 1) * pageSize)
+            const totPost = await BlogPostSchema.countDocuments()
+            const totPages = Math.ceil(totPost / pageSize)
+            res
+               .status(200)
+               .send({
+                    page: +page,
+                    totPages: +totPages,
+                    pageSize: +pageSize,
+                    blogPosts,
+                    title
+                })
+        } catch (error) {
+            next(error)
+        }
     }
 })
 

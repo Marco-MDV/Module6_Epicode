@@ -32,27 +32,34 @@ function App() {
   const seach = async (input) => {
     setLoading(true)
     setError(false)
-    try {
-      const response = await fetch(`${process.env.REACT_APP_ENDPOINT_CUSTOM}/blogPosts/search`, {
-        method: "POST",
-        body: JSON.stringify({ input: input }),
-        headers: {
-          "Content-Type": "application/json"
+    setShowNotFound(false)
+    if (input !== ' ' || '') {
+      try {
+        const response = await fetch(`${process.env.BACK_HOST}/blogPosts/search`, {
+          method: "POST",
+          body: JSON.stringify({ input: input }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        if (response.ok) {
+          const responsePosts = await response.json();
+          if (responsePosts.blogPosts.length > 0) {
+            setPosts(responsePosts.blogPosts)
+          } else {
+            setShowNotFound(true)
+          }
+          setLoading(false)
         }
-      })
-      if (response.ok) {
-        const responsePosts = await response.json();
-        if (responsePosts.blogPosts.length > 0) {
-          setPosts(responsePosts.blogPosts)
-        } else {
-          setShowNotFound(true)
-        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
         setLoading(false)
+        setError(true)
       }
-    } catch (error) {
-      console.error("Error fetching posts:", error);
+    }else{
       setLoading(false)
-      setError(true)
+      setError(false)
+      setShowNotFound(true)
     }
   }
 
