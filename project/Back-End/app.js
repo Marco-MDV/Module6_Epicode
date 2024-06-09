@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { default: mongoose } = require('mongoose');
 const app = express();
+const PORT = process.env.PORT || 3001
 const errorHandler = require('./middleware/errorHeadler/errorHeadler')
 const errorHeadlerAstract = require('./middleware/errorHeadlerAstract/errorHeadlerAstract')
 const passport = require('passport');
@@ -32,7 +33,7 @@ app.use(errorHeadlerAstract)
 app.use(errorHandler)
 
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server listening on port ${process.env.PORT}`)
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`)
 })
 
