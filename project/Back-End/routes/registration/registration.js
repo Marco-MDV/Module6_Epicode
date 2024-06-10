@@ -60,7 +60,15 @@ registration.post('/registration', [uploadCloud.single('avatar')], async (req, r
                     message: 'email already exist'
                 })
         }
-
+        const newRegistration = new registrationSchema({
+            username: req.body.username,
+            img: {
+                avatar: req.file.path,
+                public_id: req.file.filename
+            },
+            email: req.body.email,
+            password: await bcrypt.hash(req.body.password, 10)
+        })
         const author = await newRegistration.save()
         res.status(201).send({ status: 201, message: 'Registration', author })
     } catch (e) {
